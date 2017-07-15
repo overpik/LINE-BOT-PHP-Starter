@@ -4,29 +4,54 @@ $hubVerifyToken = 'sutad';
 $accessToken =   "EAAEhBXJxZCHcBAFLdeuBZCJSjz3NdhTi9tIP3nIEZCfVC9II1sLmXlOeLZAu9SqWO0hgFOoVmaMwMLy3caE3Au65e0Vjk0R2HUuRMjrbjOKq0z5jALpFIdpl91Briiycrz2cG9Of2tsGZAPYvoFMXmuUcM5Yk7ylDeoGrQ3GzzFSCeEqZAlPFDYF4INAwp8SYZD";
 // check token at setup
 if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
-  echo $_REQUEST['hub_challenge'];
-  exit;
-}else
-{
-  echo "error";
+  define('LINE_API',"https://notify-api.line.me/api/notify");
+ 
+$token = "i2PTsV6YCSc7bKt8twJbBoRFFQ2oQ1Qc54drlrH8qfI"; //ใส่Token ที่copy เอาไว้
+$str = "แจ้งเตือน มีคน Inbox Facebook"; //ข้อความที่ต้องการส่ง สูงสุด 1000 ตัวอักษร
+ 
+$res = notify_message($str,$token);
+print_r($res);
+function notify_message($message,$token){
+ $queryData = array('message' => $message);
+ $queryData = http_build_query($queryData,'','&');
+ $headerOptions = array( 
+         'http'=>array(
+            'method'=>'POST',
+            'header'=> "Content-Type: application/x-www-form-urlencoded\r\n"
+                      ."Authorization: Bearer ".$token."\r\n"
+                      ."Content-Length: ".strlen($queryData)."\r\n",
+            'content' => $queryData
+         ),
+ );
+ $context = stream_context_create($headerOptions);
+ $result = file_get_contents(LINE_API,FALSE,$context);
+ $res = json_decode($result);
+ return $res;
 }
-// handle bot's anwser
-$input = json_decode(file_get_contents('php://input'), true);
-$senderId = $input['entry'][0]['messaging'][0]['sender']['id'];
-$messageText = $input['entry'][0]['messaging'][0]['message']['text'];
-$response = null;
-//set Message
+}else{
+  define('LINE_API',"https://notify-api.line.me/api/notify");
+ 
+$token = "i2PTsV6YCSc7bKt8twJbBoRFFQ2oQ1Qc54drlrH8qfI"; //ใส่Token ที่copy เอาไว้
+$str = "แจ้งเตือน มีคน Inbox Facebook"; //ข้อความที่ต้องการส่ง สูงสุด 1000 ตัวอักษร
+ 
+$res = notify_message($str,$token);
+print_r($res);
+function notify_message($message,$token){
+ $queryData = array('message' => $message);
+ $queryData = http_build_query($queryData,'','&');
+ $headerOptions = array( 
+         'http'=>array(
+            'method'=>'POST',
+            'header'=> "Content-Type: application/x-www-form-urlencoded\r\n"
+                      ."Authorization: Bearer ".$token."\r\n"
+                      ."Content-Length: ".strlen($queryData)."\r\n",
+            'content' => $queryData
+         ),
+ );
+ $context = stream_context_create($headerOptions);
+ $result = file_get_contents(LINE_API,FALSE,$context);
+ $res = json_decode($result);
+ return $res;
+}
+}
 
-//send message to facebook bot
-$response = [
-    'recipient' => [ 'id' => $senderId ],
-    'message' => [ 'text' => 'hollow' ]
-];
-$ch = curl_init('https://graph.facebook.com/v2.6/me/messages?access_token='.$accessToken);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-if(!empty($input)){
-$result = curl_exec($ch);
-}
-curl_close($ch);
