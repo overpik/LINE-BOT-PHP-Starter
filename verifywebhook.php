@@ -12,7 +12,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
-// if($message == 'hi'){
+if($message == 'hi'){
 
   
 $curl = curl_init();
@@ -40,6 +40,9 @@ if ($err) {
   echo "cURL Error #:" . $err;
 } else {
   echo $response;
+}
+}else
+{
 }
 
 
