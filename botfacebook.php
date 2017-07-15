@@ -6,6 +6,9 @@ $accessToken =   "EAAEhBXJxZCHcBAFLdeuBZCJSjz3NdhTi9tIP3nIEZCfVC9II1sLmXlOeLZAu9
 if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
   echo $_REQUEST['hub_challenge'];
   exit;
+}else
+{
+  echo "error";
 }
 // handle bot's anwser
 $input = json_decode(file_get_contents('php://input'), true);
