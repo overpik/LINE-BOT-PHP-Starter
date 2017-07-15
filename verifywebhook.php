@@ -1,46 +1,42 @@
 <?php
-$challenge = $_REQUEST['hub_challenge'];
-$verify_token = $_REQUEST['hub_verify_token'];
+// $challenge = $_REQUEST['hub_challenge'];
+// $verify_token = $_REQUEST['hub_verify_token'];
 
-if ($verify_token === 'cloudwaysschool') {
-  echo $challenge;
-}
+// if ($verify_token === 'cloudwaysschool') {
+//   echo $challenge;
+// }
+
+
 
 $input = json_decode(file_get_contents('php://input'), true);
 
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
+$curl = curl_init();
 
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://betimesmss.herokuapp.com/pushnotify.php",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "GET",
+  CURLOPT_HTTPHEADER => array(
+    "cache-control: no-cache",
+    "postman-token: b658d48f-157c-4f49-4c76-acca163c94a9"
+  ),
+));
 
-//API Url
-$url = 'https://graph.facebook.com/v2.6/me/messages?access_token=EAAEhBXJxZCHcBAFLdeuBZCJSjz3NdhTi9tIP3nIEZCfVC9II1sLmXlOeLZAu9SqWO0hgFOoVmaMwMLy3caE3Au65e0Vjk0R2HUuRMjrbjOKq0z5jALpFIdpl91Briiycrz2cG9Of2tsGZAPYvoFMXmuUcM5Yk7ylDeoGrQ3GzzFSCeEqZAlPFDYF4INAwp8SYZD';
+$response = curl_exec($curl);
+$err = curl_error($curl);
 
-//Initiate cURL.
-$ch = curl_init($url);
+curl_close($curl);
 
-//The JSON data.
-$jsonData = '{
-    "recipient":{
-        "id":"'.$sender.'"
-    }, 
-    "message":{
-        "text":"Hey Lee!"
-    }
-}';
-
-//Encode the array into JSON.
-$jsonDataEncoded = $jsonData;
-
-//Tell cURL that we want to send a POST request.
-curl_setopt($ch, CURLOPT_POST, 1);
-
-//Attach our encoded JSON string to the POST fields.
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
-
-//Set the content type to application/json
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-
-//Execute the request
-if(!empty($input['entry'][0]['messaging'][0]['message'])){
-$result = curl_exec($ch);
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  echo $response;
 }
+
+
