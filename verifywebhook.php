@@ -12,6 +12,9 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
+if($message == 'hi'){
+
+  
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
@@ -39,4 +42,4 @@ if ($err) {
   echo $response;
 }
 
-
+}else
